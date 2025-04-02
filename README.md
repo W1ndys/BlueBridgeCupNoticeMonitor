@@ -27,8 +27,6 @@ git clone https://github.com/yourusername/lanqiao-notifier.git
 pip install -r requirements.txt
 ```
 
-````
-
 ### 配置指南
 
 在 `config.py` 中配置以下参数：
@@ -77,4 +75,3 @@ crontab -e
 ---
 
 ⭐ **如果这个项目对你有帮助，请点个 Star 支持一下！**
-````
