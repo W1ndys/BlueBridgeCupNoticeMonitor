@@ -115,7 +115,7 @@ class LanQiaoMonitor:
                     f"### {title}\n\n"
                     f"**发布时间**: {publish_time}\n\n"
                     f"**内容摘要**: {synopsis}\n\n"
-                    f"[查看详情]({self.url})",
+                    f"[查看详情](https://dasai.lanqiao.cn/notices/{item['nnid']}/)",
                 },
             }
 
