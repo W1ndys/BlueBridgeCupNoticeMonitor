@@ -33,6 +33,13 @@ class LanQiaoMonitor:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
 
+    def print_welcome(self):
+        print("--------------------------------")
+        print("蓝桥杯通知监控系统")
+        print("By W1ndys")
+        print("开源地址：https://github.com/W1ndys/BlueBridgeCupNoticeMonitor")
+        print("--------------------------------")
+
     def fetch_data(self):
         """获取API的JSON数据"""
         try:
@@ -215,4 +222,7 @@ if __name__ == "__main__":
 
     # 创建监控器实例
     monitor = LanQiaoMonitor(url, dingtalk_token, dingtalk_secret)
+    # 打印欢迎信息
+    monitor.print_welcome()
+    # 运行监控器
     monitor.run()
