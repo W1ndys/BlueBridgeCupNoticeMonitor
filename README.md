@@ -38,3 +38,7 @@ dingtalk_secret = "xxx"  # 替换为实际的钉钉机器人密钥
 ## 使用方法
 
 使用 linux 的 crontab 定时任务，定时执行即可
+
+## 实测图片
+
+![image](https://github.com/user-attachments/assets/8a0ee746-146b-44b5-9616-f26528b50675)
