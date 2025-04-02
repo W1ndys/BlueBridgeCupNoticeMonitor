@@ -1,5 +1,3 @@
-以下是为您的蓝桥杯通知监控系统 README 设计的优化版本，采用了更专业的排版和结构化展示：
-
 # 🏆 蓝桥杯通知监控系统
 
 [![GitHub Stars](https://img.shields.io/github/stars/yourusername/lanqiao-notifier?style=for-the-badge)](https://github.com/yourusername/lanqiao-notifier/stargazers)
