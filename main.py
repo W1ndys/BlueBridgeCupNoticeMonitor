@@ -189,27 +189,32 @@ class LanQiaoMonitor:
             publish_time = item["publishTime"].split("T")[0]
             synopsis = item.get("synopsis", "无摘要")
 
-            content = (
-                f"# 蓝桥杯大赛通知更新\n\n"
-                f"## {title}\n\n"
-                f"**发布时间**: {publish_time}\n\n"
-                f"**内容摘要**: {synopsis}\n\n"
-                f"[查看详情](https://dasai.lanqiao.cn/notices/{item['nnid']}/)"
+            # 使用富文本卡片发送通知
+            result = self.feishu_rich_text(
+                "蓝桥杯通知更新",
+                title,
+                publish_time,
+                synopsis,
+                f"https://dasai.lanqiao.cn/notices/{item['nnid']}/",
             )
 
-            result = self.feishu("蓝桥杯通知更新", content)
             if "error" not in result:
                 print(f"飞书通知 '{title}' 发送成功")
             else:
                 print(f"飞书通知发送失败: {result}")
 
-    def feishu(self, title: str, content: str) -> dict:
+    def feishu_rich_text(
+        self, card_title, notice_title, publish_time, synopsis, detail_url
+    ):
         """
-        发送飞书机器人消息
+        发送飞书富文本机器人消息
 
         Args:
-            title: 消息标题
-            content: 消息内容
+            card_title: 卡片标题
+            notice_title: 通知标题
+            publish_time: 发布时间
+            synopsis: 内容摘要
+            detail_url: 详情链接
 
         Returns:
             dict: 接口返回结果
@@ -232,18 +237,54 @@ class LanQiaoMonitor:
         # 构建请求头
         headers = {"Content-Type": "application/json"}
 
-        # 构建消息内容
+        # 构建富文本卡片消息
         msg = {
             "timestamp": timestamp,
             "sign": sign,
-            "msg_type": "post",
-            "content": {
-                "post": {
-                    "zh_cn": {
-                        "title": title,
-                        "content": [[{"tag": "text", "text": content}]],
-                    }
-                }
+            "msg_type": "interactive",
+            "card": {
+                "config": {"wide_screen_mode": True},
+                "header": {
+                    "title": {"tag": "plain_text", "content": card_title},
+                    "template": "blue",
+                },
+                "elements": [
+                    {
+                        "tag": "div",
+                        "text": {"tag": "lark_md", "content": f"### {notice_title}"},
+                    },
+                    {
+                        "tag": "div",
+                        "fields": [
+                            {
+                                "is_short": True,
+                                "text": {
+                                    "tag": "lark_md",
+                                    "content": f"**发布时间**\n{publish_time}",
+                                },
+                            }
+                        ],
+                    },
+                    {
+                        "tag": "div",
+                        "text": {
+                            "tag": "lark_md",
+                            "content": f"**内容摘要**\n{synopsis}",
+                        },
+                    },
+                    {"tag": "hr"},
+                    {
+                        "tag": "action",
+                        "actions": [
+                            {
+                                "tag": "button",
+                                "text": {"tag": "plain_text", "content": "查看详情"},
+                                "type": "primary",
+                                "url": detail_url,
+                            }
+                        ],
+                    },
+                ],
             },
         }
 
@@ -255,10 +296,10 @@ class LanQiaoMonitor:
             response = requests.post(
                 feishu_webhook, headers=headers, data=json.dumps(msg)
             )
-            logging.info(f"飞书发送通知消息成功🎉\n{response.json()}")
+            logging.info(f"飞书发送富文本通知消息成功🎉\n{response.json()}")
             return response.json()
         except Exception as e:
-            logging.error(f"飞书发送通知消息失败😞\n{e}")
+            logging.error(f"飞书发送富文本通知消息失败😞\n{e}")
             return {"error": str(e)}
 
     def test_dingtalk_notification(self):
@@ -333,15 +374,17 @@ class LanQiaoMonitor:
             print("飞书配置未设置，请设置环境变量 FEISHU_BOT_URL 和 FEISHU_BOT_SECRET")
             return False
 
-        title = "蓝桥杯监控测试"
-        content = (
-            f"# 蓝桥杯监控系统测试\n\n"
-            f"**测试时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-            f"**测试内容**: 这是一条测试消息，用于验证飞书通知功能是否正常工作。\n\n"
-            f"[查看监控页面]({self.url})"
+        test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # 使用富文本卡片发送测试通知
+        result = self.feishu_rich_text(
+            "蓝桥杯监控测试",
+            "蓝桥杯监控系统测试",
+            test_time,
+            "这是一条测试消息，用于验证飞书通知功能是否正常工作。",
+            self.url,
         )
 
-        result = self.feishu(title, content)
         if "error" not in result:
             print("飞书测试通知发送成功")
             return True
